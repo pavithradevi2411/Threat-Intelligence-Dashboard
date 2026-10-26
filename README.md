@@ -1,83 +1,123 @@
-# Threat Intelligence Dashboard
+# 🛡️ Threat Intelligence Dashboard
 
-## Overview
+A Python-based cybersecurity web application that investigates IP addresses and URLs using the VirusTotal API v3. The dashboard displays threat intelligence results, classifies threat severity, maintains investigation history, and generates downloadable PDF reports.
 
-The Threat Intelligence Dashboard is a Python-based cybersecurity project that helps users investigate IP addresses and URLs using the VirusTotal API. It presents threat analysis results through a web dashboard and generates PDF reports for further review.
+## 📸 Dashboard Preview
 
-## Features
+## 📸 Dashboard Preview
 
-* IP address investigation
-* URL investigation
-* VirusTotal API integration
-* Threat severity classification
-* Malicious, suspicious, harmless, and undetected detection counts
-* Investigation history stored in SQLite
-* Dashboard statistics and charts
-* PDF report generation and download
-* Environment variables for API key configuration
+### Main Dashboard
 
-## Technologies Used
+![Threat Intelligence Dashboard](dashboard1.png)
 
-* Python
-* Flask
-* VirusTotal API v3
-* SQLite
-* HTML and CSS
-* JavaScript and Chart.js
-* ReportLab
-* Requests
-* python-dotenv
+### Additional Dashboard Screenshot
 
-## Project Structure
+![Threat Intelligence Dashboard - Additional View](dashboard.png)
+
+## 📌 Project Overview
+
+The Threat Intelligence Dashboard helps users analyze IP addresses and URLs to understand their potential security risks. It integrates with VirusTotal to retrieve threat detection information and presents the results through a simple web interface.
+
+This project demonstrates practical skills in Python development, API integration, web application development, threat intelligence, database management, and cybersecurity reporting.
+
+## ✨ Features
+
+* **IP Address Investigation:** Analyze IP addresses using VirusTotal.
+* **URL Investigation:** Investigate URLs for potential security threats.
+* **VirusTotal API Integration:** Retrieve threat intelligence data through the VirusTotal API v3.
+* **Threat Severity Classification:** Display threat severity based on the application's classification logic.
+* **Detection Statistics:** View malicious, suspicious, harmless, and undetected results when available.
+* **Investigation History:** Store investigation records in a local SQLite database.
+* **Dashboard Statistics:** Display investigation data and charts.
+* **PDF Report Generation:** Generate and download investigation reports.
+* **Secure API Key Configuration:** Load the VirusTotal API key through environment variables.
+
+## 🧰 Technologies Used
+
+| Technology        | Purpose                         |
+| ----------------- | ------------------------------- |
+| Python            | Application logic               |
+| Flask             | Web application framework       |
+| VirusTotal API v3 | Threat intelligence data        |
+| SQLite            | Investigation history storage   |
+| HTML and CSS      | Dashboard structure and styling |
+| JavaScript        | Dashboard interactions          |
+| Chart.js          | Data visualization              |
+| Requests          | HTTP API requests               |
+| python-dotenv     | Environment variable management |
+| ReportLab         | PDF report generation           |
+
+## 📂 Project Structure
 
 ```text
-Threat_Intelligence_Dashboard/
+Threat-Intelligence-Dashboard/
+│
 ├── templates/
 │   └── dashboard.html
+│
 ├── app.py
 ├── requirements.txt
 ├── .gitignore
 └── README.md
 ```
 
-## Installation and Setup
+The `.env` file and local database are kept out of the public repository.
 
-### 1. Clone the repository
+## ⚙️ Installation and Setup
+
+### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/pavithradevi2411/Threat-Intelligence-Dashboard.git
+```
+
+Navigate to the project directory:
+
+```bash
 cd Threat-Intelligence-Dashboard
 ```
 
-### 2. Create a virtual environment
+### 2. Create a Virtual Environment
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it on Windows:
+### 3. Activate the Virtual Environment
+
+On Windows PowerShell:
 
 ```powershell
 .venv\Scripts\Activate.ps1
 ```
 
-### 3. Install dependencies
+If you are using Command Prompt:
+
+```cmd
+.venv\Scripts\activate.bat
+```
+
+### 4. Install Dependencies
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
-### 4. Configure the VirusTotal API key
+### 5. Configure the VirusTotal API Key
 
-Create a `.env` file in the project root directory and add:
+Create a file named `.env` in the project root directory, alongside `app.py`.
+
+Add the following line:
 
 ```text
 VT_API_KEY=YOUR_VIRUSTOTAL_API_KEY
 ```
 
-Replace the placeholder with your own VirusTotal API key. Never upload your `.env` file to GitHub.
+Replace `YOUR_VIRUSTOTAL_API_KEY` with your own VirusTotal API key.
 
-### 5. Run the application
+**Important:** Never commit or upload your `.env` file or API key to GitHub.
+
+### 6. Run the Application
 
 ```bash
 python app.py
@@ -87,22 +127,54 @@ Open your browser and visit:
 
 http://127.0.0.1:5000/
 
-## How It Works
+Keep the terminal running while you use the dashboard.
 
-1. The user submits an IP address or URL.
+## 🔍 How It Works
+
+1. The user submits an IP address or URL through the dashboard.
 2. The application sends a request to the VirusTotal API.
-3. The application processes the returned analysis data.
-4. The dashboard displays the detection counts and severity classification.
-5. Investigation results are stored in a local SQLite database.
-6. Users can download PDF reports of their investigations.
+3. The application processes the returned threat detection information.
+4. The dashboard displays the available detection statistics and severity classification.
+5. Investigation records are stored in a local SQLite database.
+6. The user can review investigation history and download PDF reports.
 
-## Security Notes
+## 🧪 Cybersecurity Concepts Demonstrated
 
-* Keep API keys private.
-* Do not commit `.env` files or local databases.
-* Use threat intelligence results as indicators for investigation, not as conclusive proof of malicious activity.
-* Respect VirusTotal API usage limits.
+* Threat intelligence analysis
+* IP address and URL investigation
+* REST API integration
+* HTTP requests and response handling
+* Threat detection statistics
+* Web application development
+* Database operations using SQLite
+* Security reporting and documentation
+* Environment variable management
 
-## Author
+## 🔐 Security Considerations
 
-Cybersecurity Project — Threat Intelligence Dashboard
+* Keep API keys and other secrets private.
+* Do not upload `.env` files to public repositories.
+* Avoid committing local databases containing investigation records.
+* Treat VirusTotal results as indicators for further investigation, not conclusive proof that an IP address or URL is malicious or safe.
+* Respect VirusTotal API terms and usage limits.
+* Test only systems and resources you are authorized to investigate.
+
+## 🚀 Future Enhancements
+
+* Add support for domain and file hash investigations.
+* Improve input validation and error handling.
+* Add investigation filtering and search.
+* Provide more detailed threat analysis summaries.
+* Add user authentication and access controls.
+* Improve dashboard visualizations and reporting.
+
+## 👩‍💻 Author
+
+**Cybersecurity Project — Threat Intelligence Dashboard**
+
+Developed as a hands-on cybersecurity project to explore threat intelligence, API integration, and security reporting.
+
+## 📄 Disclaimer
+
+This project is intended for educational and authorized cybersecurity investigation purposes. Threat intelligence results may be incomplete or change over time. Always verify findings using additional trusted sources before making security decisions.
+
