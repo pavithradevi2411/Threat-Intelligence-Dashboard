@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Threat Intelligence Dashboard</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1120;
+            color: #e5e7eb;
+        }
+
+        header {
+            background: #111827;
+            padding: 24px 35px;
+            border-bottom: 1px solid #263247;
+        }
+
+        header h1 {
+            margin: 0;
+            color: #38bdf8;
+        }
+
+        header p {
+            color: #9ca3af;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(
+                auto-fit,
+                minmax(190px, 1fr)
+            );
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card, .panel {
+            background: #111827;
+            padding: 22px;
+            border: 1px solid #263247;
+            border-radius: 12px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #9ca3af;
+            font-size: 15px;
+        }
+
+        .number {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .blue { color: #38bdf8; }
+        .red { color: #f87171; }
+        .yellow { color: #fbbf24; }
+        .green { color: #4ade80; }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: #38bdf8;
+        }
+
+        label {
+            display: block;
+            margin: 15px 0 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border-radius: 7px;
+            border: 1px solid #374151;
+            background: #0b1120;
+            color: white;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 18px;
+            background: #0284c7;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #0369a1;
+        }
+
+        .result, .message {
+            margin-top: 20px;
+            padding: 15px;
+            background: #172033;
+            border-radius: 8px;
+            overflow-wrap: anywhere;
+        }
+
+        .message {
+            border-left: 4px solid #fbbf24;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px 8px;
+            border-bottom: 1px solid #263247;
+            overflow-wrap: anywhere;
+        }
+
+        th {
+            color: #38bdf8;
+        }
+
+        a {
+            color: #38bdf8;
+        }
+
+        .history {
+            margin-top: 22px;
+            overflow-x: auto;
+        }
+
+        .notice {
+            color: #9ca3af;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        footer {
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            header {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Threat Intelligence Dashboard</h1>
+    <p>IP Reputation | URL Analysis | Cybersecurity</p>
+</header>
+
+<main>
+
+    <section class="cards">
+
+        <div class="card">
+            <h3>Successful Investigations</h3>
+            <div class="number blue">{{ total_scans }}</div>
+        </div>
+
+        <div class="card">
+            <h3>High Severity</h3>
+            <div class="number red">{{ high_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Medium Severity</h3>
+            <div class="number yellow">{{ medium_count }}</div>
+        </div>
+
+        <div class="card">
+            <h3>Low Severity</h3>
+            <div class="number green">{{ low_count }}</div>
+        </div>
+
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="message">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="layout">
+
+        <div class="panel">
+
+            <h2>Investigate a Threat</h2>
+
+            <form action="{{ url_for('investigate') }}" method="POST">
+
+                <label for="indicator">
+                    IP Address or URL
+                </label>
+
+                <input
+                    type="text"
+                    id="indicator"
+                    name="indicator"
+                    placeholder="Example: 8.8.8.8"
+                    required
+                >
+
+                <label for="indicator_type">
+                    Indicator Type
+                </label>
+
+                <select
+                    id="indicator_type"
+                    name="indicator_type"
+                >
+                    <option value="ip">IP Address</option>
+                    <option value="url">URL</option>
+                </select>
+
+                <button type="submit">
+                    Analyze Threat
+                </button>
+
+            </form>
+
+            {% if result %}
+
+                <div class="result">
+
+                    <h3>Analysis Result</h3>
+
+                    <p>
+                        <strong>Indicator:</strong>
+                        {{ result.indicator }}
+                    </p>
+
+                    <p>
+                        <strong>Severity:</strong>
+
+                        {% if result.severity == 'HIGH' %}
+                            <span class="red">HIGH</span>
+                        {% elif result.severity == 'MEDIUM' %}
+                            <span class="yellow">MEDIUM</span>
+                        {% else %}
+                            <span class="green">LOW</span>
+                        {% endif %}
+                    </p>
+
+                    <p>
+                        <strong>Malicious:</strong>
+                        {{ result.malicious }}
+                    </p>
+
+                    <p>
+                        <strong>Suspicious:</strong>
+                        {{ result.suspicious }}
+                    </p>
+
+                    <p>
+                        <strong>Harmless:</strong>
+                        {{ result.harmless }}
+                    </p>
+
+                    <p>
+                        <strong>Undetected:</strong>
+                        {{ result.undetected }}
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+            {% if error %}
+                <div class="message">
+                    <strong>Analysis notice:</strong>
+                    {{ error }}
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="panel">
+
+            <h2>Threat Statistics</h2>
+
+            <canvas id="threatChart"></canvas>
+
+            <p class="notice">
+                Statistics reflect successful investigations
+                saved in the local database.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="panel history">
+
+        <h2>Investigation History</h2>
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Indicator</th>
+                    <th>Type</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>PDF Report</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in history %}
+
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.indicator }}</td>
+                        <td>{{ item.indicator_type }}</td>
+                        <td>{{ item.severity }}</td>
+                        <td>{{ item.status }}</td>
+
+                        <td>
+                            <a href="{{ url_for(
+                                'download_report',
+                                report_id=item.id
+                            ) }}">
+                                Download PDF
+                            </a>
+                        </td>
+                    </tr>
+
+                {% else %}
+
+                    <tr>
+                        <td colspan="6">
+                            No investigations yet.
+                            Analyze an IP address or URL to begin.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </section>
+
+    <p class="notice">
+        Educational project for authorized cybersecurity investigations.
+        A low severity result does not guarantee that an indicator is safe.
+    </p>
+
+</main>
+
+<footer class="notice">
+    Threat Intelligence Dashboard | Cybersecurity Project
+</footer>
+
+<script>
+    const chartElement = document.getElementById("threatChart");
+
+    new Chart(chartElement, {
+        type: "doughnut",
+
+        data: {
+            labels: [
+                "High Severity",
+                "Medium Severity",
+                "Low Severity"
+            ],
+
+            datasets: [{
+                data: [
+                    {{ high_count }},
+                    {{ medium_count }},
+                    {{ low_count }}
+                ],
+
+                backgroundColor: [
+                    "#f87171",
+                    "#fbbf24",
+                    "#4ade80"
+                ],
+
+                borderWidth: 0
+            }]
+        },
+
+        options: {
+            responsive: true,
+
+            plugins: {
+                legend: {
+                    position: "bottom",
+
+                    labels: {
+                        color: "#e5e7eb"
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

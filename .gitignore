@@ -1,0 +1,32 @@
+# Secret API keys and environment variables
+
+.env
+.env.*
+
+# Python virtual environment
+
+.venv/
+venv/
+
+# Python cache files
+
+**pycache**/
+*.py[cod]
+
+# Local database
+
+threat_history.db
+*.db
+
+# IDE settings
+
+.idea/
+
+# Generated PDF reports
+
+*.pdf
+
+# Temporary files
+
+*.log
+.DS_Store
